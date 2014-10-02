@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+    
+   <TextView 
+       android:id="@+id/textview_local_location"
+       android:layout_width="match_parent"
+       android:layout_height="wrap_content"
+       android:text="location"/>
+   <!--  
+   <ScrollView
+       android:id="@+id/scrollview_localmain"
+       android:layout_width="match_parent"
+       android:layout_height="wrap_content">
+       -->
+       <LinearLayout
+           android:id="@+id/linearlayout_local_scrollchild"
+           android:layout_width="match_parent"
+           android:layout_height="wrap_content"
+           android:orientation="vertical"
+           >
+	       <LinearLayout 
+	           android:id="@+id/linearlayout_local_folder"
+	           android:layout_width="match_parent"
+	           android:layout_height="wrap_content"
+	           android:layout_weight="1"
+	           android:orientation="vertical">
+		       <TextView
+		           android:id="@+id/textview_local_folder"
+		           android:layout_width="match_parent"
+		           android:layout_height="wrap_content"
+		           android:textStyle="bold"
+		           android:textSize="15sp"
+		       	   android:text="폴더"
+		       	   />
+		       <ListView 
+		           android:id="@+id/listview_local_folder"
+		           android:layout_width="match_parent"
+		           android:layout_height="wrap_content">
+		       </ListView>
+	       </LinearLayout>
+	       
+	        <LinearLayout 
+	           android:id="@+id/linearlayout_local_file"
+	           android:layout_width="match_parent"
+	           android:layout_height="wrap_content"
+	           android:layout_weight="1"
+	           android:orientation="vertical">
+		       <TextView
+		           android:id="@+id/textview_local_file"
+		           android:layout_width="match_parent"
+		           android:layout_height="wrap_content"
+		           android:textStyle="bold"
+		           android:textSize="15sp"
+		       	   android:text="파일"
+		       	   />
+		       <ListView 
+		           android:id="@+id/listview_local_file"
+		           android:layout_width="match_parent"
+		           android:layout_height="wrap_content">
+		       </ListView>
+	       </LinearLayout>
+	       
+       </LinearLayout>
+  <!--  
+       </ScrollView>
+	-->
+</LinearLayout>
