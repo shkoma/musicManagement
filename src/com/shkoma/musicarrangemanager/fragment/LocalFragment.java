@@ -4,20 +4,27 @@ import java.io.File;
 import java.util.ArrayList;
 
 import com.shkoma.musicarrangemanager.*;
+import com.shkoma.musicarrangemanager.dialog.LocalMenuDialog;
 
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnKeyListener;
 import android.view.ViewGroup;
+import android.view.WindowManager.LayoutParams;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -32,20 +39,35 @@ public class LocalFragment extends Fragment{
 	private ArrayList<String> folderList;
 	
 	private LinearLayout main;
+	private FrameLayout frameMain;
+	private RelativeLayout btnRelative;
+	
 	private ListView fileView;
 	private ListView folderView;
 	private TextView textViewLocal;
 	private TextView textViewFile;
 	private TextView textViewFolder;
+	private ImageView imageViewBtn;
+	private Handler mHandler;
+	
+	private int x, y;
+	
+	private LocalMenuDialog menuDialog;
 	
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{
 		super.onCreateView(inflater, container, savedInstanceState);
 		main = (LinearLayout)View.inflate(getActivity(), R.layout.local , null);
+		frameMain = (FrameLayout)View.inflate(getActivity(), R.layout.local_frame_layout, null);
+		btnRelative = (RelativeLayout)View.inflate(getActivity(), R.layout.local_relative_btn, null);
+		
+		imageViewBtn = (ImageView)btnRelative.findViewById(R.id.imageView_local_btn);
 		
 		textViewLocal = (TextView)main.findViewById(R.id.textview_local_location);
 		textViewFile = (TextView)main.findViewById(R.id.textview_local_file);
 		textViewFolder = (TextView)main.findViewById(R.id.textview_local_folder);
+		
+		imageViewBtn.setOnClickListener(menuListener);
 		
 		//extRoot = Environment.getExternalStorageDirectory().getAbsolutePath();
 		
@@ -62,8 +84,32 @@ public class LocalFragment extends Fragment{
 		checkFileAndFolder(extRoot);
 		setListView();
 		
-		return main;
+		frameMain.addView(main);
+		frameMain.addView(btnRelative);
+		return frameMain;
 	}
+	
+	View.OnClickListener menuListener = new View.OnClickListener() {
+		
+		@Override
+		public void onClick(View v) {
+			// TODO Auto-generated method stub
+			switch(v.getId())
+			{
+			case R.id.imageView_local_btn:
+				menuDialog = new LocalMenuDialog(getActivity(), mHandler);
+				// 위치 정하기
+				LayoutParams params = menuDialog.getWindow().getAttributes();
+
+				params.x = 180;
+				params.y = 330;
+				menuDialog.getWindow().setAttributes(params);
+				
+				menuDialog.show();
+				break;
+			}
+		}
+	};
 	
 	public boolean isRoot()
 	{
@@ -99,7 +145,6 @@ public class LocalFragment extends Fragment{
 	}
 	
 	private AdapterView.OnItemClickListener fileListener = new AdapterView.OnItemClickListener() {
-
 		@Override
 		public void onItemClick(AdapterView<?> parent, View view, int position,
 				long id) {
@@ -109,7 +154,6 @@ public class LocalFragment extends Fragment{
 	};
 	
 	private AdapterView.OnItemClickListener folderListener = new AdapterView.OnItemClickListener() {
-
 		@Override
 		public void onItemClick(AdapterView<?> parent, View view, int position,
 				long id) {
@@ -204,7 +248,6 @@ public class LocalFragment extends Fragment{
 				fileView.setVisibility(View.VISIBLE);
 				textViewFile.setVisibility(View.VISIBLE);
 			}
-			
 			adapter = (ArrayAdapter)fileView.getAdapter();
 			adapter.notifyDataSetChanged();
 		}

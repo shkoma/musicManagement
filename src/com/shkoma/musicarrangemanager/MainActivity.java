@@ -8,8 +8,10 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.RelativeLayout;
@@ -55,6 +57,17 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
 		setContentView(main);
 	}
 
+//	@Override
+//	public boolean onTouchEvent(MotionEvent event){
+//		super.onTouchEvent(event);
+//		
+//		int x = (int)event.getX();
+//		int y = (int)event.getY();
+//		
+//		Log.i(TAG, "x: " + x + ", y: " + y);
+//		return true;
+//	}
+//	// 540, 1034
 	@Override
 	public void onBackPressed()
 	{
