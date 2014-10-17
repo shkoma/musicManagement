@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="priority">
+        <item>곡명</item>
+        <item>아티스트</item>
+        <item>앨범</item>
+        <item>작곡가</item>
+        <item>작사가</item>
+        <item>발매년도</item>
+        <item>발매월</item>
+        <item>트랙번호</item>
+    </string-array>
+</resources>

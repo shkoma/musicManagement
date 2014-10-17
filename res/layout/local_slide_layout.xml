@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="match_parent"
+    android:background="#ffffff"
+    android:padding="5dp"
+    android:orientation="vertical" >
+    <!--    android:background="@drawable/android" -->
+    
+    <LinearLayout 
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="10"
+        android:gravity="center"
+        android:layout_gravity="center">
+    
+	    <TextView 
+	        android:id="@+id/textView_prioritySelect"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_marginBottom="5dp"
+	        android:gravity="center"
+	        android:background="#777777"
+	        android:textColor="#ffffff"
+	        android:textStyle="bold|italic"
+	        android:textSize="15sp"
+	        android:text="우선순위선택"/>
+	    
+	    <LinearLayout 
+	        android:id="@+id/linearLayout_prioritySelect"
+	        android:orientation="vertical"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_weight="1"
+	        android:layout_gravity="center"
+	        android:gravity="center"
+	        android:padding="5dp">
+	        
+	        <Button 
+	            android:id="@+id/btn_priority_one"
+	            android:layout_width="match_parent"
+	            android:layout_height="wrap_content"
+	            android:layout_weight="1"
+	            android:gravity="center"
+	            android:text="1순위 선택"
+	            android:textStyle="bold"/>
+	        
+	        <Button 
+	            android:id="@+id/btn_priority_two"
+	            android:layout_width="match_parent"
+	            android:layout_height="wrap_content"
+	            android:layout_weight="1"
+	            android:gravity="center"
+	            android:text="2순위 선택"
+	            android:textStyle="bold"/>
+	        
+	        <Button 
+	            android:id="@+id/btn_priority_three"
+	            android:layout_width="match_parent"
+	            android:layout_height="wrap_content"
+	            android:layout_weight="1"
+	            android:gravity="center"
+	            android:text="3순위 선택"
+	            android:textStyle="bold"/>
+	        
+	    </LinearLayout>
+	    
+	    <TextView 
+	        android:id="@+id/textView_fileNameSelect"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_marginTop="5dp"
+	        android:layout_marginBottom="5dp"
+	        android:gravity="center"
+	        android:background="#777777"
+	        android:text="파일이름형식지정"
+	        android:textColor="#ffffff"
+	        android:textSize="15sp"
+	        android:textStyle="bold|italic"/>
+	    
+	    <LinearLayout 
+	        android:id="@+id/linearlayout_fileNameSelect"
+	        android:orientation="vertical"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_weight="1"
+	        android:padding="5dp">
+	        
+	        <EditText 
+	            android:id="@+id/editText_fileNameSelect_one"
+	            android:layout_width="match_parent"
+	            android:layout_height="wrap_content"
+	            android:layout_weight="1"
+	            android:hint="%a"/>
+	        
+	        <EditText 
+	            android:id="@+id/editText_fileNameSelect_two"
+	            android:layout_width="match_parent"
+	            android:layout_height="wrap_content"
+	            android:layout_weight="1"
+	            android:hint="%a"/>
+	        
+	        <EditText 
+	            android:id="@+id/editText_fileNameSelect_three"
+	            android:layout_width="match_parent"
+	            android:layout_height="wrap_content"
+	            android:layout_weight="1"
+	            android:hint="%a"/>
+	    </LinearLayout>
+    
+    </LinearLayout>
+
+    <LinearLayout 
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:layout_gravity="center"
+        android:padding="5dp">
+	    
+        <Button android:id="@+id/btn_slide_ok"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:padding="5dp"
+            android:gravity="center"
+            android:text="미리보기"
+            android:textStyle="bold"/>
+        
+        <Button android:id="@+id/btn_slide_cancel"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:padding="5dp"
+            android:gravity="center"
+            android:text="취소"
+            android:textStyle="bold"/>
+        
+    </LinearLayout>
+    
+</LinearLayout>

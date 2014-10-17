@@ -3,12 +3,15 @@ package com.shkoma.musicarrangemanager;
 import com.shkoma.musicarrangemanager.fragment.LocalFragment;
 import com.shkoma.musicarrangemanager.fragment.SettingFragment;
 import com.shkoma.musicarrangemanager.fragment.WebFragment;
-
+import android.annotation.SuppressLint;
+import android.graphics.Point;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -16,6 +19,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 
+@SuppressLint("NewApi")
 public class MainActivity extends FragmentActivity implements View.OnClickListener{
 
 	private final String TAG = MainActivity.class.getSimpleName();
@@ -36,6 +40,10 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
 	private WebFragment webFragment;
 	private SettingFragment settingFragment;
 	
+	//private static int dpi = -1;
+	//private static float density = -1;
+	
+	public static Point mainSize;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -51,10 +59,19 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
 		tabSetting.setOnClickListener(this);
 		
 		currentFragment = LOCALFRAGMENT;
+		// dp 와 density를 알아낸다.
+		DisplayMetrics outMetrics = new DisplayMetrics();
+		mainSize = new Point();
+		this.getWindowManager().getDefaultDisplay().getMetrics(outMetrics);
+		this.getWindowManager().getDefaultDisplay().getSize(mainSize);
 		
-		fragmentReplace(currentFragment);
+		Log.i(TAG, "mainSize W: " + mainSize.x);
+		Log.i(TAG, "mainSize W: " + mainSize.y);
+	//	dpi = outMetrics.densityDpi;
+	//	density = outMetrics.density;
 		
 		setContentView(main);
+		fragmentReplace(currentFragment);
 	}
 
 //	@Override
@@ -67,10 +84,31 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
 //		Log.i(TAG, "x: " + x + ", y: " + y);
 //		return true;
 //	}
-//	// 540, 1034
+////	// 540, 1034
+	
+//	static public int getDpi()
+//	{
+//		return dpi;
+//	}
+//	static public float getDensity()
+//	{
+//		return density;
+//	}
+	
+	public void onResume()
+	{
+		super.onResume();
+		
+	}
+	
 	@Override
 	public void onBackPressed()
 	{
+		if( localFragment.isSlide() ){
+			localFragment.onBackPressedWithSlide();
+			return;
+		}
+		
 		if( currentFragment == LOCALFRAGMENT && !localFragment.isRoot() ){
 			localFragment.onBackPressed();
 			return;
@@ -101,21 +139,33 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
 	public void onClick(View v) {
 		// TODO Auto-generated method stub
 		
+		boolean isSwap = false;
+		
 		switch(v.getId())
 		{
 		case R.id.btn_tab1:
-			currentFragment = LOCALFRAGMENT;
+			if( currentFragment != LOCALFRAGMENT ){
+				currentFragment = LOCALFRAGMENT;
+				isSwap = true;
+			}
 			break;
 			
 		case R.id.btn_tab2:
-			currentFragment = WEBFRAGMENT;
+			if( currentFragment != WEBFRAGMENT ){
+				currentFragment = WEBFRAGMENT;
+				isSwap = true;
+			}
 			break;
 			
 		case R.id.btn_tab3:
-			currentFragment = SETTINGFRAGMENT;
+			if( currentFragment != SETTINGFRAGMENT ){
+				currentFragment = SETTINGFRAGMENT;
+				isSwap = true;
+			}
 			break;
 		}
-		fragmentReplace(currentFragment);
+		if( isSwap )
+			fragmentReplace(currentFragment);
 	}
 	
 	private void fragmentReplace(int newFragmentIndex)

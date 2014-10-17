@@ -5,12 +5,20 @@ import java.util.ArrayList;
 
 import com.shkoma.musicarrangemanager.*;
 import com.shkoma.musicarrangemanager.dialog.LocalMenuDialog;
+import com.shkoma.musicarrangemanager.dialog.LocalPriorityDialog;
 
+import android.annotation.SuppressLint;
+import android.content.Context;
+import android.graphics.Point;
+import android.graphics.Rect;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
+import android.os.Message;
 import android.support.v4.app.Fragment;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -18,8 +26,12 @@ import android.view.View;
 import android.view.View.OnKeyListener;
 import android.view.ViewGroup;
 import android.view.WindowManager.LayoutParams;
+import android.view.animation.Animation;
+import android.view.animation.TranslateAnimation;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -32,6 +44,19 @@ public class LocalFragment extends Fragment{
 
 	private final String TAG = LocalFragment.class.getSimpleName();
 	
+	public static final int SONGNAME = 0;
+	public static final int ARTIST = 1;
+	public static final int ALBUM = 2;
+	public static final int SONGWRITHER = 3;
+	public static final int LYLICSWRITER = 4;
+	public static final int SONGYEAR = 5;
+	public static final int SONGMONTH = 6;
+	public static final int TRACK = 7;
+	
+	private final String priOneString = "1순위 선택";
+	private final String priTwoString = "2순위 선택";
+	private final String priThreeString = "3순위 선택";
+	
 	private String extRoot ="/sdcard";
 	private String mPath = "/sdcard";
 	
@@ -39,6 +64,7 @@ public class LocalFragment extends Fragment{
 	private ArrayList<String> folderList;
 	
 	private LinearLayout main;
+	private LinearLayout slide;
 	private FrameLayout frameMain;
 	private RelativeLayout btnRelative;
 	
@@ -48,16 +74,67 @@ public class LocalFragment extends Fragment{
 	private TextView textViewFile;
 	private TextView textViewFolder;
 	private ImageView imageViewBtn;
-	private Handler mHandler;
 	
-	private int x, y;
+	//button
+	private Button btnPriorityOne;
+	private Button btnPriorityTwo;
+	private Button btnPriorityThree;
 	
-	private LocalMenuDialog menuDialog;
+	private Button btnOk;
+	private Button btnCancel;
 	
+	public static final int PRIORITYONE = 100;
+	public static final int PRIORITYTWO = 200;
+	public static final int PRIORITYTHREE = 300;
+	
+	//EditText
+	private EditText editTextOne;
+	private EditText editTextTwo;
+	private EditText editTextThree;
+	
+	//private LocalMenuDialog menuDialog;
+	
+	private TranslateAnimation mShowAni;
+	private TranslateAnimation mHideAni;
+	private LinearLayout.LayoutParams slideParam;
+	private Point mainSize;
+	
+	private LocalPriorityDialog localPriDialog;
+	
+	@SuppressLint("NewApi")
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{
 		super.onCreateView(inflater, container, savedInstanceState);
+		
+		mainSize = new Point();
+		getActivity().getWindow().getWindowManager().getDefaultDisplay().getSize(mainSize);
+		
 		main = (LinearLayout)View.inflate(getActivity(), R.layout.local , null);
+		
+		slide = (LinearLayout)View.inflate(getActivity(), R.layout.local_slide_layout, null);
+		slideParam = new LinearLayout.LayoutParams((int)(mainSize.x*0.8), LayoutParams.MATCH_PARENT);
+		slide.setLayoutParams(slideParam);
+		
+		// slide button and EditText
+		btnPriorityOne = (Button)slide.findViewById(R.id.btn_priority_one);
+		btnPriorityTwo = (Button)slide.findViewById(R.id.btn_priority_two);
+		btnPriorityThree = (Button)slide.findViewById(R.id.btn_priority_three);
+		
+		btnPriorityOne.setOnClickListener(btnPriListener);
+		btnPriorityTwo.setOnClickListener(btnPriListener);
+		btnPriorityThree.setOnClickListener(btnPriListener);
+		
+		editTextOne = (EditText)slide.findViewById(R.id.editText_fileNameSelect_one);
+		editTextTwo = (EditText)slide.findViewById(R.id.editText_fileNameSelect_two);
+		editTextThree = (EditText)slide.findViewById(R.id.editText_fileNameSelect_three);
+		
+		btnOk = (Button)slide.findViewById(R.id.btn_slide_ok);
+		btnCancel = (Button)slide.findViewById(R.id.btn_slide_cancel);
+		
+		btnOk.setOnClickListener(btnOkAndCancelListener);
+		btnCancel.setOnClickListener(btnOkAndCancelListener);
+		
+		
 		frameMain = (FrameLayout)View.inflate(getActivity(), R.layout.local_frame_layout, null);
 		btnRelative = (RelativeLayout)View.inflate(getActivity(), R.layout.local_relative_btn, null);
 		
@@ -86,34 +163,203 @@ public class LocalFragment extends Fragment{
 		
 		frameMain.addView(main);
 		frameMain.addView(btnRelative);
+		frameMain.addView(slide);
+		slide.setVisibility(View.INVISIBLE);
 		return frameMain;
+	}
+	
+	private Handler mHandler = new Handler(){
+		
+		public void handleMessage(Message msg)
+		{
+			String setPriority;
+			switch(msg.what)
+			{
+			case PRIORITYONE:
+				// handler message가 여러곳에서 올수 있기에 함수를 세번다 불러야함.
+				setPriority = checkPriority(msg.arg1);
+				if( !setPriority.equals(null) )
+					btnPriorityOne.setText(setPriority);
+				break;
+				
+			case PRIORITYTWO:
+				setPriority = checkPriority(msg.arg1);
+				if( !setPriority.equals(null) )
+					btnPriorityTwo.setText(setPriority);
+				break;
+				
+			case PRIORITYTHREE:
+				setPriority = checkPriority(msg.arg1);
+				if( !setPriority.equals(null) )
+					btnPriorityThree.setText(setPriority);
+				break;
+			}
+		}
+	};
+	
+	private String checkPriority(int priority)
+	{
+		String stringPri = null;
+		switch(priority)
+		{
+		case SONGNAME:
+			stringPri = "곡명";
+			break;
+		case ARTIST:
+			stringPri = "아티스트";
+			break;
+		case ALBUM:
+			stringPri = "앨범";
+			break;
+		case SONGWRITHER:
+			stringPri = "작곡가";
+			break;
+		case LYLICSWRITER:
+			stringPri = "작사가";
+			break;
+		case SONGYEAR:
+			stringPri = "발매년도";
+			break;
+		case SONGMONTH:
+			stringPri = "발매월";
+			break;
+		case TRACK:
+			stringPri = "트랙";
+			break;
+		}
+		return stringPri;
+	}
+	
+	public void onStart()
+	{
+		super.onStart();
+		doAnimation();
+	}
+	
+	// slide animation
+	private void openSlide(){
+		
+		slide.setVisibility(View.VISIBLE);
+		slide.startAnimation(mShowAni);
+	}
+	private void closeSlide(){
+		
+		slide.setVisibility(View.INVISIBLE);
+		slide.startAnimation(mHideAni);
+	}
+	private void doAnimation(){
+		
+		mShowAni = new TranslateAnimation(Animation.RELATIVE_TO_SELF, -1.0f, 
+										  Animation.RELATIVE_TO_SELF, 0.0f, 
+										  Animation.RELATIVE_TO_SELF, 0.0f, 
+										  Animation.RELATIVE_TO_SELF, 0.0f);
+		
+		mHideAni = new TranslateAnimation(Animation.RELATIVE_TO_SELF, 0.0f,
+										  Animation.RELATIVE_TO_SELF, -1.0f,
+										  Animation.RELATIVE_TO_SELF, 0.0f,
+										  Animation.RELATIVE_TO_SELF, 0.0f);
+		
+		mShowAni.setDuration(1000);
+		mHideAni.setDuration(1000);
 	}
 	
 	View.OnClickListener menuListener = new View.OnClickListener() {
 		
+		@SuppressLint("NewApi")
 		@Override
 		public void onClick(View v) {
 			// TODO Auto-generated method stub
 			switch(v.getId())
 			{
 			case R.id.imageView_local_btn:
-				menuDialog = new LocalMenuDialog(getActivity(), mHandler);
-				// 위치 정하기
-				LayoutParams params = menuDialog.getWindow().getAttributes();
-
-				params.x = 180;
-				params.y = 330;
-				menuDialog.getWindow().setAttributes(params);
 				
-				menuDialog.show();
+				Log.i(TAG, "is if");
+				if( slide.getVisibility() == View.INVISIBLE ){
+					openSlide();
+					Log.i(TAG, "open Slide");
+				}
+				
 				break;
 			}
 		}
 	};
 	
+	View.OnClickListener btnPriListener = new View.OnClickListener() {
+		
+		
+		@Override
+		public void onClick(View v) {
+			// TODO Auto-generated method stub
+			
+			int priority = -1;
+			switch(v.getId()){
+			case R.id.btn_priority_one:
+				priority = PRIORITYONE;
+				break;
+
+			case R.id.btn_priority_two:
+				priority = PRIORITYTWO;
+				break;
+				
+			case R.id.btn_priority_three:
+				priority = PRIORITYTHREE;
+				break;
+			}
+			if( priority != -1 ){
+				localPriDialog = new LocalPriorityDialog(getActivity(), mHandler, priority);
+				localPriDialog.show();
+			}
+		}
+	};
+	
+	View.OnClickListener btnOkAndCancelListener = new View.OnClickListener() {
+		
+		@Override
+		public void onClick(View v) {
+			// TODO Auto-generated method stub
+			
+			switch( v.getId() )
+			{
+			case R.id.btn_slide_ok:
+			
+			case R.id.btn_slide_cancel:
+				closeSlide();
+
+				resetPriority();
+				resetFileName();
+				break;
+			}
+		}
+	};
+	
+	
 	public boolean isRoot()
 	{
 		return mPath.equals(extRoot);
+	}
+	public boolean isSlide(){
+		
+		return slide.getVisibility() == View.VISIBLE ? true : false;
+	}
+	
+	private void resetPriority(){
+		
+		btnPriorityOne.setText(priOneString);
+		btnPriorityTwo.setText(priTwoString);
+		btnPriorityThree.setText(priThreeString);
+	}
+	private void resetFileName(){
+		editTextOne.setHint("%a");
+		editTextTwo.setHint("%a");
+		editTextThree.setHint("%a");
+	}
+	
+	public void onBackPressedWithSlide(){
+		closeSlide();
+		
+		resetPriority();
+		resetFileName();
+		
 	}
 	
 	public void onBackPressed()
