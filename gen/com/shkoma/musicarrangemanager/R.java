@@ -29,16 +29,16 @@ public final class R {
         public static final int ic_launcher=0x7f020001;
     }
     public static final class id {
-        public static final int action_settings=0x7f09001f;
+        public static final int action_settings=0x7f090020;
         public static final int btn_priority_one=0x7f09000e;
         public static final int btn_priority_three=0x7f090010;
         public static final int btn_priority_two=0x7f09000f;
         public static final int btn_setting_menu=0x7f090000;
-        public static final int btn_slide_cancel=0x7f090017;
-        public static final int btn_slide_ok=0x7f090016;
-        public static final int btn_tab1=0x7f090019;
-        public static final int btn_tab2=0x7f09001a;
-        public static final int btn_tab3=0x7f09001b;
+        public static final int btn_slide_cancel=0x7f090018;
+        public static final int btn_slide_ok=0x7f090017;
+        public static final int btn_tab1=0x7f09001a;
+        public static final int btn_tab2=0x7f09001b;
+        public static final int btn_tab3=0x7f09001c;
         public static final int btn_transaction=0x7f090001;
         public static final int editText_fileNameSelect_one=0x7f090013;
         public static final int editText_fileNameSelect_three=0x7f090015;
@@ -46,21 +46,22 @@ public final class R {
         public static final int imageView_local_btn=0x7f09000b;
         public static final int linearLayout_prioritySelect=0x7f09000d;
         public static final int linearlayout_fileNameSelect=0x7f090012;
-        public static final int linearlayout_fragment_view=0x7f09001c;
+        public static final int linearlayout_fragment_view=0x7f09001d;
         public static final int linearlayout_local_file=0x7f090007;
         public static final int linearlayout_local_folder=0x7f090004;
         public static final int linearlayout_local_scrollchild=0x7f090003;
-        public static final int linearlayout_tab=0x7f090018;
+        public static final int linearlayout_tab=0x7f090019;
         public static final int listView_priority=0x7f09000a;
         public static final int listview_local_file=0x7f090009;
         public static final int listview_local_folder=0x7f090006;
-        public static final int listview_setting=0x7f09001d;
+        public static final int listview_setting=0x7f09001e;
+        public static final int textView_check_fileName=0x7f090016;
         public static final int textView_fileNameSelect=0x7f090011;
         public static final int textView_prioritySelect=0x7f09000c;
         public static final int textview_local_file=0x7f090008;
         public static final int textview_local_folder=0x7f090005;
         public static final int textview_local_location=0x7f090002;
-        public static final int webview_web=0x7f09001e;
+        public static final int webview_web=0x7f09001f;
     }
     public static final class layout {
         public static final int dialog_local_menu=0x7f030000;

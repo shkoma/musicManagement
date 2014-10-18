@@ -107,6 +107,15 @@
 	            android:layout_height="wrap_content"
 	            android:layout_weight="1"
 	            android:hint="%a"/>
+	        
+	        <TextView 
+	            android:id="@+id/textView_check_fileName"
+	            android:layout_width="match_parent"
+	            android:layout_height="wrap_content"
+	            android:layout_weight="1"
+	            android:hint="파일 이름"
+	            />
+	        
 	    </LinearLayout>
     
     </LinearLayout>

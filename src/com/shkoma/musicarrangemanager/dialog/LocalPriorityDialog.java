@@ -11,6 +11,7 @@ import android.content.DialogInterface;
 import android.os.Handler;
 import android.os.Message;
 import android.view.View;
+import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
@@ -31,6 +32,9 @@ public class LocalPriorityDialog extends Dialog{
 	public LocalPriorityDialog(Context context, Handler handler, int priority) {
 		super(context);
 		// TODO Auto-generated constructor stub
+	
+		requestWindowFeature(Window.FEATURE_NO_TITLE);
+		
 		mPriority = priority;
 		mHandler = handler;
 		mContext = context;

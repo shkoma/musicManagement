@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="priority">
+        <item>없음</item>
         <item>곡명</item>
         <item>아티스트</item>
         <item>앨범</item>
