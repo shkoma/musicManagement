@@ -21,6 +21,8 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.Fragment;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
@@ -33,6 +35,8 @@ import android.view.ViewGroup;
 import android.view.WindowManager.LayoutParams;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -43,6 +47,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
 
 public class LocalFragment extends Fragment {
@@ -79,6 +84,7 @@ public class LocalFragment extends Fragment {
 	private TextView textViewLocal;
 	private TextView textViewFile;
 	private TextView textViewFolder;
+	private TextView textPreviewFileName;
 	private ImageView imageViewBtn;
 
 	// button
@@ -106,7 +112,8 @@ public class LocalFragment extends Fragment {
 	private Point mainSize;
 
 	private LocalPriorityDialog localPriDialog;
-
+	private InputMethodManager inputManager;
+	
 	@SuppressLint("NewApi")
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
@@ -115,6 +122,7 @@ public class LocalFragment extends Fragment {
 		mainSize = new Point();
 		getActivity().getWindow().getWindowManager().getDefaultDisplay()
 				.getSize(mainSize);
+		inputManager = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
 
 		main = (LinearLayout) View.inflate(getActivity(), R.layout.local, null);
 
@@ -140,6 +148,16 @@ public class LocalFragment extends Fragment {
 		editTextThree = (EditText) slide
 				.findViewById(R.id.editText_fileNameSelect_three);
 
+		// set editorListener
+		editTextOne.setOnEditorActionListener(textListener);
+		editTextTwo.setOnEditorActionListener(textListener);
+		editTextThree.setOnEditorActionListener(textListener);
+		
+		// set textWatcher
+		editTextOne.addTextChangedListener(textWatcher);
+		editTextTwo.addTextChangedListener(textWatcher);
+		editTextThree.addTextChangedListener(textWatcher);
+		
 		// editText 숨기기
 		editTextOne.setVisibility(View.INVISIBLE);
 		editTextTwo.setVisibility(View.INVISIBLE);
@@ -164,6 +182,8 @@ public class LocalFragment extends Fragment {
 		textViewFile = (TextView) main.findViewById(R.id.textview_local_file);
 		textViewFolder = (TextView) main
 				.findViewById(R.id.textview_local_folder);
+		
+		textPreviewFileName = (TextView)slide.findViewById(R.id.textView_slide_preview_file_name);
 
 		imageViewBtn.setOnClickListener(menuListener);
 
@@ -251,7 +271,7 @@ public class LocalFragment extends Fragment {
 		mShowAni.setDuration(1000);
 		mHideAni.setDuration(1000);
 	}
-
+	
 	View.OnClickListener menuListener = new View.OnClickListener() {
 
 		@SuppressLint("NewApi")
@@ -264,9 +284,18 @@ public class LocalFragment extends Fragment {
 				Log.i(TAG, "is if");
 				if (slide.getVisibility() == View.INVISIBLE) {
 					openSlide();
+					
+					fileView.postDelayed(new Runnable(){
+						public void run()
+						{
+							fileView.setVisibility(View.INVISIBLE);
+							folderView.setVisibility(View.INVISIBLE);
+						}
+					}, 1000);
+					
 					Log.i(TAG, "open Slide");
 				}
-
+				
 				break;
 			}
 		}
@@ -309,6 +338,9 @@ public class LocalFragment extends Fragment {
 			switch (v.getId()) {
 			case R.id.btn_slide_ok:
 
+				// 미리보기 완성 후 주석 없애기
+//				fileView.setVisibility(View.VISIBLE);
+//				folderView.setVisibility(View.VISIBLE);
 				break;
 			case R.id.btn_slide_cancel:
 
@@ -324,6 +356,9 @@ public class LocalFragment extends Fragment {
 										closeSlide();
 										resetPriority();
 										resetFileName();
+								
+										fileView.setVisibility(View.VISIBLE);
+										folderView.setVisibility(View.VISIBLE);
 									}
 								})
 						.setNegativeButton("NO",
@@ -333,7 +368,6 @@ public class LocalFragment extends Fragment {
 										dialog.cancel();
 									}
 								}).show();
-
 				break;
 			}
 		}
@@ -345,7 +379,7 @@ public class LocalFragment extends Fragment {
 		btnPriorityOne.setText(priOneString);
 		btnPriorityTwo.setText(priTwoString);
 		btnPriorityThree.setText(priThreeString);
-		if( btnPriorityThree.getVisibility() != View.VISIBLE ){
+		if (btnPriorityThree.getVisibility() != View.VISIBLE) {
 			btnPriorityThree.setVisibility(View.VISIBLE);
 		}
 	}
@@ -354,6 +388,7 @@ public class LocalFragment extends Fragment {
 		editTextOne.setHint("%a");
 		editTextTwo.setHint("%a");
 		editTextThree.setHint("%a");
+		textPreviewFileName.setText("");
 
 		if (editTextOne.getVisibility() != View.INVISIBLE)
 			editTextOne.setVisibility(View.INVISIBLE);
@@ -395,24 +430,22 @@ public class LocalFragment extends Fragment {
 
 			case PRIORITYTWO:
 				setPriority = checkPriority(msg.arg1);
+				
 				if (!setPriority.equals(null)) {
 					btnPriorityTwo.setText(setPriority);
 					setEditText(msg.arg1, setPriority, editTextTwo);
-					
-					if( msg.arg1 == NOTHING ) // 3순위 선택 불가 하기
+
+					if (msg.arg1 == NOTHING) // 3순위 선택 불가 하기
 					{
-						btnPriorityThree.setText(PRIORITYTHREE);
-						btnPriorityThree.setVisibility(View.GONE);
-						
-						if( editTextThree.getVisibility() == View.VISIBLE )
-						{
+						btnPriorityThree.setText(priThreeString);
+						btnPriorityThree.setVisibility(View.INVISIBLE);
+
+						if (editTextThree.getVisibility() == View.VISIBLE) {
 							editTextThree.setHint("%a");
 							editTextThree.setVisibility(View.INVISIBLE);
 						}
-					}
-					else
-					{
-						if( btnPriorityThree.getVisibility() != View.VISIBLE )
+					} else {
+						if (btnPriorityThree.getVisibility() != View.VISIBLE)
 							btnPriorityThree.setVisibility(View.VISIBLE);
 					}
 				}
@@ -427,6 +460,7 @@ public class LocalFragment extends Fragment {
 				}
 				break;
 			}
+			setPreviewFileName();
 		}
 	};
 
@@ -475,27 +509,93 @@ public class LocalFragment extends Fragment {
 		}
 		return stringPri;
 	}
+	
+	private void setPreviewFileName(){
+		
+		String name="";
+		Editable preName;
+		//preName = (String) editTextOne.getText();
+		
+		preName = editTextOne.getText();
+		name = (String) preName.toString();
+		
+		if( editTextTwo.getVisibility() == View.VISIBLE )
+		{
+			name += "_" + (String)editTextTwo.getText().toString();
+		}
+		
+		if( editTextThree.getVisibility() == View.VISIBLE )
+		{
+			name += "_" + (String)editTextThree.getText().toString();
+		}
+
+		Log.i(TAG, "name: " + name);
+		textPreviewFileName.setText(name);
+	}
+
+	
+	TextView.OnEditorActionListener textListener = new TextView.OnEditorActionListener(){
+
+		@Override
+		public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+			// TODO Auto-generated method stub
+			switch(v.getId())
+			{
+			case R.id.editText_fileNameSelect_one:
+			case R.id.editText_fileNameSelect_two:
+			case R.id.editText_fileNameSelect_three:
+				
+				// IME_NULL is the generic key for ENTER, IME= inputMethodEditor
+				if( actionId == EditorInfo.IME_NULL && event.getAction() == KeyEvent.ACTION_UP )
+				{
+					setPreviewFileName();
+					inputManager.hideSoftInputFromWindow(((EditText)v).getWindowToken(), 0);
+				}
+				return true;
+			}
+			return false;
+		}
+		
+	};
+	
+	TextWatcher textWatcher = new TextWatcher(){
+		
+		@Override
+		public void onTextChanged(CharSequence s, int start, int before, int count){
+			
+		}
+		@Override
+		public void afterTextChanged(Editable arg0) {
+			// TODO Auto-generated method stub
+			setPreviewFileName();
+		}
+		@Override
+		public void beforeTextChanged(CharSequence arg0, int arg1, int arg2,
+				int arg3) {
+			// TODO Auto-generated method stub
+			
+		}
+	};
+	
 
 	private AdapterView.OnItemClickListener fileListener = new AdapterView.OnItemClickListener() {
 		@Override
 		public void onItemClick(AdapterView<?> parent, View view, int position,
 				long id) {
 			// TODO Auto-generated method stub
-			
+
 			String strItem = fileList.get(position);
-			
-			try{
+
+			try {
 				Intent intent = new Intent(Intent.ACTION_VIEW);
-				File file = new File(mPath+"/"+strItem);
+				File file = new File(mPath + "/" + strItem);
 				String extension = android.webkit.MimeTypeMap
 						.getFileExtensionFromUrl(Uri.fromFile(file).toString());
 				String mimetype = android.webkit.MimeTypeMap.getSingleton()
 						.getMimeTypeFromExtension(extension);
 				intent.setDataAndType(Uri.fromFile(file), mimetype);
 				startActivity(intent);
-			}
-			catch( Exception e)
-			{
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
 

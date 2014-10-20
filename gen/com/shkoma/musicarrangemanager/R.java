@@ -55,9 +55,9 @@ public final class R {
         public static final int listview_local_file=0x7f090009;
         public static final int listview_local_folder=0x7f090006;
         public static final int listview_setting=0x7f09001e;
-        public static final int textView_check_fileName=0x7f090016;
         public static final int textView_fileNameSelect=0x7f090011;
         public static final int textView_prioritySelect=0x7f09000c;
+        public static final int textView_slide_preview_file_name=0x7f090016;
         public static final int textview_local_file=0x7f090008;
         public static final int textview_local_folder=0x7f090005;
         public static final int textview_local_location=0x7f090002;
