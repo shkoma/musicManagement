@@ -399,8 +399,10 @@ public class LocalFragment extends Fragment {
 	}
 
 	public void onBackPressedWithSlide() {
-		closeSlide();
+		fileView.setVisibility(View.VISIBLE);
+		folderView.setVisibility(View.VISIBLE);
 
+		closeSlide();
 		resetPriority();
 		resetFileName();
 

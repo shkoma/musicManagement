@@ -3,7 +3,9 @@ package com.shkoma.musicarrangemanager;
 import com.shkoma.musicarrangemanager.fragment.LocalFragment;
 import com.shkoma.musicarrangemanager.fragment.SettingFragment;
 import com.shkoma.musicarrangemanager.fragment.WebFragment;
+
 import android.annotation.SuppressLint;
+import android.content.pm.ActivityInfo;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -47,6 +49,8 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
+		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);  
 		
 		main = (RelativeLayout)View.inflate(this, R.layout.main, null);
 		
