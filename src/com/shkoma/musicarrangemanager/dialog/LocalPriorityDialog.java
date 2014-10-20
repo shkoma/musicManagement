@@ -43,20 +43,10 @@ public class LocalPriorityDialog extends Dialog{
 		list = (ListView)main.findViewById(R.id.listView_priority);
 		
 		adapter = ArrayAdapter.createFromResource(context, R.array.priority, android.R.layout.simple_list_item_1);
-		
-		
-//		String [] priorityArray = { "곡명", "아티스트", "앨범", "작곡가", "작사가",
-//				"발매년도", "발매월", "트랙번호"};
-//		
-//		ArrayAdapter<String> adapter2 = new ArrayAdapter<String>( context,
-//				android.R.layout.simple_list_item_1, priorityArray );
-//		
 		priorityArray = context.getResources().getStringArray(R.array.priority);
 		
 		list.setAdapter(adapter);
 		list.setOnItemClickListener(mItemClickListener);
-		//list.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
-		//list.setDivider(new ColorDrawable(0x000000));
 		list.setDividerHeight(5);
 		
 		setContentView(main);

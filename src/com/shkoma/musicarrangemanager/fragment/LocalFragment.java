@@ -4,7 +4,6 @@ import java.io.File;
 import java.util.ArrayList;
 
 import com.shkoma.musicarrangemanager.*;
-import com.shkoma.musicarrangemanager.dialog.LocalMenuDialog;
 import com.shkoma.musicarrangemanager.dialog.LocalPriorityDialog;
 
 import android.annotation.SuppressLint;
@@ -187,9 +186,6 @@ public class LocalFragment extends Fragment {
 
 		imageViewBtn.setOnClickListener(menuListener);
 
-		// extRoot =
-		// Environment.getExternalStorageDirectory().getAbsolutePath();
-
 		// sdcard가 있는지 확인
 		if (!isSdCard()) {
 			Toast.makeText(getActivity(), "sdcard가 장착되어있지 않거나 에러가 존재", 0)
@@ -284,21 +280,16 @@ public class LocalFragment extends Fragment {
 				Log.i(TAG, "is if");
 				if (slide.getVisibility() == View.INVISIBLE) {
 					openSlide();
-					
-//					fileView.postDelayed(new Runnable(){
-//						public void run()
-//						{
-							if (fileView.getVisibility() == View.VISIBLE
-									&& folderView.getVisibility() == View.VISIBLE) {
-								fileView.setVisibility(View.INVISIBLE);
-								folderView.setVisibility(View.INVISIBLE);
-							}
-//						}
-//					}, 500);
-					
+
+					if (fileView.getVisibility() == View.VISIBLE
+							|| folderView.getVisibility() == View.VISIBLE) {
+						fileView.setVisibility(View.INVISIBLE);
+						folderView.setVisibility(View.INVISIBLE);
+					}
+
 					Log.i(TAG, "open Slide");
 				}
-				
+
 				break;
 			}
 		}
@@ -523,19 +514,18 @@ public class LocalFragment extends Fragment {
 		
 		String name="";
 		Editable preName;
-		//preName = (String) editTextOne.getText();
 		
 		preName = editTextOne.getText();
 		name = (String) preName.toString();
 		
 		if( editTextTwo.getVisibility() == View.VISIBLE )
 		{
-			name += "_" + (String)editTextTwo.getText().toString();
+			name += (String)editTextTwo.getText().toString();
 		}
 		
 		if( editTextThree.getVisibility() == View.VISIBLE )
 		{
-			name += "_" + (String)editTextThree.getText().toString();
+			name += (String)editTextThree.getText().toString();
 		}
 
 		Log.i(TAG, "name: " + name);

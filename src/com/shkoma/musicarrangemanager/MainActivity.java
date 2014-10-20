@@ -42,9 +42,6 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
 	private WebFragment webFragment;
 	private SettingFragment settingFragment;
 	
-	//private static int dpi = -1;
-	//private static float density = -1;
-	
 	public static Point mainSize;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
