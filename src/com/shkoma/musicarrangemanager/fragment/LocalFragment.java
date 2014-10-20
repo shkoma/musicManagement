@@ -285,13 +285,16 @@ public class LocalFragment extends Fragment {
 				if (slide.getVisibility() == View.INVISIBLE) {
 					openSlide();
 					
-					fileView.postDelayed(new Runnable(){
-						public void run()
-						{
-							fileView.setVisibility(View.INVISIBLE);
-							folderView.setVisibility(View.INVISIBLE);
-						}
-					}, 1000);
+//					fileView.postDelayed(new Runnable(){
+//						public void run()
+//						{
+							if (fileView.getVisibility() == View.VISIBLE
+									&& folderView.getVisibility() == View.VISIBLE) {
+								fileView.setVisibility(View.INVISIBLE);
+								folderView.setVisibility(View.INVISIBLE);
+							}
+//						}
+//					}, 500);
 					
 					Log.i(TAG, "open Slide");
 				}
@@ -357,8 +360,10 @@ public class LocalFragment extends Fragment {
 										resetPriority();
 										resetFileName();
 								
-										fileView.setVisibility(View.VISIBLE);
-										folderView.setVisibility(View.VISIBLE);
+										if( fileView.getVisibility() != View.VISIBLE ){
+											fileView.setVisibility(View.VISIBLE);
+											folderView.setVisibility(View.VISIBLE);
+										}
 									}
 								})
 						.setNegativeButton("NO",
@@ -399,9 +404,11 @@ public class LocalFragment extends Fragment {
 	}
 
 	public void onBackPressedWithSlide() {
-		fileView.setVisibility(View.VISIBLE);
-		folderView.setVisibility(View.VISIBLE);
-
+		
+		if (fileView.getVisibility() != View.VISIBLE) {
+			fileView.setVisibility(View.VISIBLE);
+			folderView.setVisibility(View.VISIBLE);
+		}
 		closeSlide();
 		resetPriority();
 		resetFileName();
