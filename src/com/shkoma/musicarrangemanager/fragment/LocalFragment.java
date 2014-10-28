@@ -182,6 +182,9 @@ public class LocalFragment extends Fragment {
 		textViewFolder = (TextView) main
 				.findViewById(R.id.textview_local_folder);
 		
+		textViewFolder.setOnClickListener(textViewFolderListener);
+		//textViewFile.setOnClickListener(textViewFolderListener);
+		
 		textPreviewFileName = (TextView)slide.findViewById(R.id.textView_slide_preview_file_name);
 
 		imageViewBtn.setOnClickListener(menuListener);
@@ -332,7 +335,7 @@ public class LocalFragment extends Fragment {
 			switch (v.getId()) {
 			case R.id.btn_slide_ok:
 
-				// 미리보기 완성 후 주석 없애기
+			// 미리보기 완성 후 주석 없애기
 //				fileView.setVisibility(View.VISIBLE);
 //				folderView.setVisibility(View.VISIBLE);
 				break;
@@ -369,6 +372,27 @@ public class LocalFragment extends Fragment {
 		}
 	};
 
+	View.OnClickListener textViewFolderListener = new View.OnClickListener() {
+		
+		@Override
+		public void onClick(View v) {
+			// TODO Auto-generated method stub
+			
+			switch( v.getId() ){
+			case R.id.textview_local_folder:
+				
+				if(folderView.getVisibility() == View.VISIBLE )
+				{
+					folderView.setVisibility(View.GONE);
+				}
+				else
+					folderView.setVisibility(View.VISIBLE);
+				
+				break;
+			}
+		}
+	};
+	
 	// 초기화 하는 부분
 	private void resetPriority() {
 
